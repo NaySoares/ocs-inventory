@@ -1,0 +1,53 @@
+FROM ubuntu:20.04
+
+ENV TZ=America/Belem
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    make \
+    perl \
+    apache2 \
+    php \
+    libxml-simple-perl \
+    libdbi-perl \
+    libdbd-mysql-perl \
+    libapache-dbi-perl \
+    libnet-ip-perl \
+    libsoap-lite-perl \
+    libarchive-zip-perl \
+    libswitch-perl \
+    libmojolicious-perl \
+    libplack-perl \
+    build-essential \
+    php-pclzip \
+    php-mbstring \
+    php-soap \
+    php-mysql \
+    php-curl \
+    php-xml \
+    php-zip \
+    php-gd \
+    php-ldap
+
+# Instalacao do Python 3.7.12 via codigo fonte
+RUN apt-get install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev pkg-config -y && \
+    cd /tmp && \
+    wget https://www.python.org/ftp/python/3.7.12/Python-3.7.12.tgz && \
+    tar -xf Python-3.7.12.tgz && \
+    rm Python-3.7.12.tgz && \
+    cd /tmp/Python-3.7.12 && \
+    ./configure --enable-optimizations --enable-shared && \
+    make -j4 && \
+    make altinstall && \
+    ldconfig && \
+    rm -rf /tmp/Python-3.7.12 && \
+    ln -s /usr/local/bin/python3.7 /usr/local/bin/python
+
+# Instalacao do pip e atualizacao do urllib3 para a versao necessaria
+RUN apt install -y python3-pip && \
+    python -m pip install --upgrade pip && \
+    python -m pip install discord requests discord-webhook && \
+    pip install urllib3==1.26.6
